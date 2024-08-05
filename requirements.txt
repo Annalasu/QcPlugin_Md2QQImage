@@ -1,0 +1,4 @@
+pkg
+mirai
+requests
+beautifulsoup4
