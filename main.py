@@ -4,7 +4,7 @@ import re
 import mirai
 
 
-@register(name="Md2QQImage", description="Convert Markdown images to QQ images", version="0.1",
+@register(name="Md2QQImage", description="Convert Markdown images to QQ images", version="0.2",
           author="Annalasu")
 class MarkdownImagePlugin(BasePlugin):
 
@@ -17,7 +17,7 @@ class MarkdownImagePlugin(BasePlugin):
     @handler(PersonNormalMessageReceived)
     async def person_normal_message_received(self, ctx: EventContext):
         msg = ctx.event.text_message
-        converted_message = self.convert_markdown_to_qq_message(msg)
+        converted_message = await self.convert_markdown_to_qq_message(ctx, msg)
         if converted_message:
             await ctx.reply(converted_message)
             ctx.prevent_default()
@@ -25,12 +25,12 @@ class MarkdownImagePlugin(BasePlugin):
     @handler(GroupNormalMessageReceived)
     async def group_normal_message_received(self, ctx: EventContext):
         msg = ctx.event.text_message
-        converted_message = self.convert_markdown_to_qq_message(msg)
+        converted_message = await self.convert_markdown_to_qq_message(ctx, msg)
         if converted_message:
             await ctx.reply(converted_message)
             ctx.prevent_default()
 
-    def convert_markdown_to_qq_message(self, markdown_message: str):
+    async def convert_markdown_to_qq_message(self, ctx: EventContext, markdown_message: str):
         markdown_image_pattern = r'!\[.*?\]\((.*?)\)'
         image_urls = re.findall(markdown_image_pattern, markdown_message)
         if not image_urls:
