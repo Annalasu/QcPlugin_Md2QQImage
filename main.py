@@ -9,7 +9,7 @@ class BotMessageOptimizerPlugin(Plugin):
     def __init__(self, plugin_host: PluginHost):
         super().__init__(plugin_host)
         # 匹配图片 URL 的正则表达式
-        self.image_pattern = re.compile(r'\[(https?://\S+)\]')
+        self.image_pattern = re.compile(r'!\[.*?\]\((https?://\S+)\)')
 
     @on(NormalMessageResponded)
     def optimize_message(self, event: EventContext, **kwargs):
@@ -27,9 +27,9 @@ class BotMessageOptimizerPlugin(Plugin):
             if start > last_end:
                 parts.append(Plain(message[last_end:start]))
             # 提取图片 URL 并添加图片
+            parts.append(Plain(" 下载 "))  # 添加 下载 文本
             image_url = match.group(1)
             parts.append(Image(url=image_url))
-            parts.append(Plain("[下载]"))  # 添加 [下载] 文本
             last_end = end
         # 添加最后一个图片后的文本
         if last_end < len(message):
