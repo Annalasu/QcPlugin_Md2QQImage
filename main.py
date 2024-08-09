@@ -27,7 +27,6 @@ class BotMessageOptimizerPlugin(Plugin):
             if start > last_end:
                 parts.append(Plain(message[last_end:start]))
             # 提取图片 URL 并添加图片
-            parts.append(Plain(" 下载 "))  # 添加 下载 文本
             image_url = match.group(1)
             parts.append(Image(url=image_url))
             last_end = end
