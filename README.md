@@ -13,4 +13,14 @@
 
 <!-- 插件开发者自行填写插件使用说明 -->
 
-优化 bot 发送的消息，将 markdown 图片链接转换为实际图片
+优化 bot 发送的消息，将 markdown 图片链接转换为实际图片，适用于会返回图片 URL 的绘图模型，效果如下
+
+
+
+**添加前**
+
+![before](https://github.com/user-attachments/assets/a4b029cb-932c-4823-9193-f7447076df52)
+
+**添加后**
+
+![after](https://github.com/user-attachments/assets/15bbc528-0d82-4900-916f-5a14a644fcac)
