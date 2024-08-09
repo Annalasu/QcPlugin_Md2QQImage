@@ -1,51 +1,40 @@
-from pkg.plugin.context import register, handler, llm_func, BasePlugin, APIHost, EventContext
-from pkg.plugin.events import *  # 导入事件类
+from pkg.plugin.models import *
+from pkg.plugin.host import EventContext, PluginHost
 import re
-import mirai
+from mirai import Image, Plain
 
-"""
-在收到私聊或群聊消息中包含 Markdown 图片链接时，将其转换为 QQ 支持的图片消息格式并正确显示。
-"""
+@register(name="Md2QQImage", description="优化 bot 发送的消息，将图片链接转换为实际图片", version="1.0", author="Annalasu")
+class BotMessageOptimizerPlugin(Plugin):
 
-# 注册插件
-@register(name="MdLink2Image", description="Convert Markdown image links to QQ image format", version="0.2", author="Annalasu")
-class MarkdownImageConverterPlugin(BasePlugin):
+    def __init__(self, plugin_host: PluginHost):
+        super().__init__(plugin_host)
+        # 匹配图片 URL 的正则表达式
+        self.image_pattern = re.compile(r'\[(https?://\S+)\]')
 
-    # 插件加载时触发
-    def __init__(self, host: APIHost):
-        pass
+    @on(NormalMessageResponded)
+    def optimize_message(self, event: EventContext, **kwargs):
+        original_message = kwargs['response_text']
+        optimized_message = self.convert_message(original_message)
+        if optimized_message:
+            event.add_return('reply', optimized_message)
 
-    # 异步初始化
-    async def initialize(self):
-        pass
+    def convert_message(self, message):
+        parts = []
+        last_end = 0
+        for match in self.image_pattern.finditer(message):
+            start, end = match.span()
+            # 添加图片前的文本
+            if start > last_end:
+                parts.append(Plain(message[last_end:start]))
+            # 提取图片 URL 并添加图片
+            image_url = match.group(1)
+            parts.append(Image(url=image_url))
+            parts.append(Plain("[下载]"))  # 添加 [下载] 文本
+            last_end = end
+        # 添加最后一个图片后的文本
+        if last_end < len(message):
+            parts.append(Plain(message[last_end:]))
+        return parts if parts else message  # 如果没有修改，返回原始消息
 
-    # 转换 Markdown 图片链接为 QQ 支持的图片消息格式
-    def convert_markdown_image(self, text):
-        pattern = re.compile(r'!\[.*?\]\((.*?)\)')
-        matches = pattern.findall(text)
-        images = []
-        for url in matches:
-            images.append(mirai.Image(url=url))
-        return images
-
-    # 当收到个人消息时触发
-    @handler(PersonNormalMessageReceived)
-    async def person_normal_message_received(self, ctx: EventContext):
-        msg = ctx.event.text_message  # 这里的 event 即为 PersonNormalMessageReceived 的对象
-        images = self.convert_markdown_image(msg)
-        if images:
-            ctx.add_return("reply", images)
-            ctx.prevent_default()
-
-    # 当收到群消息时触发
-    @handler(GroupNormalMessageReceived)
-    async def group_normal_message_received(self, ctx: EventContext):
-        msg = ctx.event.text_message  # 这里的 event 即为 GroupNormalMessageReceived 的对象
-        images = self.convert_markdown_image(msg)
-        if images:
-            ctx.add_return("reply", images)
-            ctx.prevent_default()
-
-    # 插件卸载时触发
     def __del__(self):
         pass
