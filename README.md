@@ -24,3 +24,10 @@
 **添加后**
 
 ![after](https://github.com/user-attachments/assets/15bbc528-0d82-4900-916f-5a14a644fcac)
+
+---
+## API 中转站推荐
+- 硅基流动(注册赠送 14 RMB ): [硅基流动](https://cloud.siliconflow.cn/i/BpkIIBCf)
+  
+- GPTGOD (注册赠送5000积分): [GPTGOD](https://gptgod.online/#/register?invite_code=guf2zc0ylzmn9gwf6miomp4g)
+  
