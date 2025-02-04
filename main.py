@@ -1,9 +1,9 @@
 from pkg.plugin.models import *
 from pkg.plugin.host import EventContext, PluginHost
 import re
-from mirai import Image, Plain
+import pkg.platform.types as platform_types
 
-@register(name="Md2QQImage", description="优化 bot 发送的消息，将图片链接转换为实际图片", version="1.0", author="Annalasu")
+@register(name="MdLink2QQImage", description="优化 bot 发送的消息，将图片链接转换为实际图片", version="1.2", author="Annalasu")
 class BotMessageOptimizerPlugin(Plugin):
 
     def __init__(self, plugin_host: PluginHost):
@@ -25,14 +25,14 @@ class BotMessageOptimizerPlugin(Plugin):
             start, end = match.span()
             # 添加图片前的文本
             if start > last_end:
-                parts.append(Plain(message[last_end:start]))
+                parts.append(platform_types.Plain(message[last_end:start]))
             # 提取图片 URL 并添加图片
             image_url = match.group(1)
-            parts.append(Image(url=image_url))
+            parts.append(platform_types.Image(url=image_url))
             last_end = end
         # 添加最后一个图片后的文本
         if last_end < len(message):
-            parts.append(Plain(message[last_end:]))
+            parts.append(platform_types.Plain(message[last_end:]))
         return parts if parts else message  # 如果没有修改，返回原始消息
 
     def __del__(self):
