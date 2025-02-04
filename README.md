@@ -1,4 +1,4 @@
-# Md2QQImage
+# MdLink2QQImage
 
 ## 安装
 
